@@ -1,10 +1,17 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import "../src/index.css";
+import EmployeeForm from "./components/employee-form";
+import EmployeeList from "./components/employee-list";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<EmployeeForm />} />
+        <Route path="/employees" element={<EmployeeList />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;
