@@ -8,5 +8,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.10.0"
+  "packageManager": "pnpm@10.10.0",
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-datepicker": "^8.3.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.4",
+    "@types/react-datepicker": "^6.2.0",
+    "@types/react-dom": "^19.1.5",
+    "typescript": "^5.8.3"
+  }
 }

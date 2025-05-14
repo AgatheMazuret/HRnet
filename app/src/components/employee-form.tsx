@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import { states } from "./states";
 import DatePicker from "react-datepicker";
+import { ReactDatePickerProps } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router";
+import Modal from "@agathemazuret/hrnet-react-modal";
+
+const CustomDatePicker =
+  DatePicker as React.ComponentType<ReactDatePickerProps>;
 
 // Interface définissant la structure d'un état (state) pour le formulaire
 interface State {
@@ -90,8 +95,15 @@ export function EmployeeForm() {
       <h1 className="text-3xl font-bold text-center text-purple-600 mb-6">
         Employee Form
       </h1>
-
+      <Modal
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        title="Confirmation"
+      >
+        <p>Employee saved successfully!</p>
+      </Modal>
       {/* Formulaire principal */}
+
       <form
         className="flex flex-col gap-6 bg-white p-6 rounded-lg shadow-md"
         onSubmit={handleSubmit}
@@ -118,9 +130,11 @@ export function EmployeeForm() {
 
         {/* Sélecteur de date pour la date de naissance */}
         <div className="flex flex-col gap-3">
-          <DatePicker
+          <CustomDatePicker
             selected={formData.dateOfBirth}
-            onChange={(date) => handleDateChange("dateOfBirth", date)}
+            onChange={(date: Date | null) =>
+              handleDateChange("dateOfBirth", date)
+            }
             placeholderText="Date of Birth"
             dateFormat="MM/dd/yyyy"
             showYearDropdown
@@ -131,9 +145,9 @@ export function EmployeeForm() {
         </div>
 
         {/* Sélecteur de date pour la date de début */}
-        <DatePicker
+        <CustomDatePicker
           selected={formData.startDate}
-          onChange={(date) => handleDateChange("startDate", date)}
+          onChange={(date: Date | null) => handleDateChange("startDate", date)}
           placeholderText="Start Date"
           dateFormat="MM/dd/yyyy"
           showYearDropdown
@@ -221,7 +235,7 @@ export function EmployeeForm() {
         </button>
       </form>
 
-      {/* Message de confirmation après la soumission */}
+      {/* faire une modal */}
       {showConfirmation && (
         <div className="mt-6 p-4 bg-pink-100 border border-pink-500 rounded-lg shadow">
           <p className="text-purple-700 font-bold">
