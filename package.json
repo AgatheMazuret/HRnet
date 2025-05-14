@@ -1,23 +1,35 @@
 {
-  "name": "hrnet-react",
-  "version": "1.0.0",
+  "name": "@agathemazuret/hrnet-react",
+  "version": "1.1.0",
   "description": "",
+  "keywords": [],
+  "homepage": "https://github.com/AgatheMazuret/HRnet#readme",
+  "bugs": {
+    "url": "https://github.com/AgatheMazuret/HRnet/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AgatheMazuret/HRnet.git"
+  },
+  "license": "ISC",
+  "author": "agathemazuret",
+  "type": "commonjs",
+  "main": "index.js",
   "scripts": {
     "dev": "pnpm -F app dev"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.10.0",
   "dependencies": {
+    "hrnet-react": "file:hrnet-react-1.0.0.tgz",
     "react": "^19.1.0",
     "react-datepicker": "^8.3.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/datatables.net": "^1.10.28",
     "@types/react": "^19.1.4",
     "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^19.1.5",
     "typescript": "^5.8.3"
-  }
+  },
+  "packageManager": "pnpm@10.10.0"
 }
