@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import DataTable from "react-data-table-component";
-import type { TableColumn } from "react-data-table-component";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link } from "react-router";
 
+// Définition du type Employee pour représenter les données d'un employé
 type Employee = {
   firstName: string;
   lastName: string;
@@ -15,59 +14,64 @@ type Employee = {
   zipCode: string;
 };
 
-const columns: TableColumn<Employee>[] = [
-  { name: "First Name", selector: (row) => row.firstName, sortable: true },
-  { name: "Last Name", selector: (row) => row.lastName, sortable: true },
-  { name: "Start Date", selector: (row) => row.startDate, sortable: true },
-  { name: "Department", selector: (row) => row.department, sortable: true },
-  { name: "Date of Birth", selector: (row) => row.dateOfBirth, sortable: true },
-  { name: "Street", selector: (row) => row.street, sortable: true },
-  { name: "City", selector: (row) => row.city, sortable: true },
-  { name: "State", selector: (row) => row.state, sortable: true },
-  { name: "Zip Code", selector: (row) => row.zipCode, sortable: true },
-];
+function getData(): Employee[] {
+  const data = localStorage.getItem("employees");
+  if (data) {
+    return JSON.parse(data);
+  }
+  return [];
+}
 
-const EmployeeTable: React.FC = () => {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const navigate = useNavigate(); // Initialisation du hook navigate
+// Composant principal pour afficher la liste des employés
+const EmployeeTable = () => {
+  const mountedRef = React.useRef(false);
+  const employees = getData();
 
+  // Chargement des employés depuis le localStorage au montage du composant
   useEffect(() => {
-    const data = localStorage.getItem("employees");
-    if (data) {
-      try {
-        setEmployees(JSON.parse(data));
-      } catch (err) {
-        console.error("Invalid JSON in localStorage:", err);
-      }
+    if (mountedRef.current) {
+      return;
     }
+    $(function () {
+      $("#employee-table").DataTable({
+        data: employees,
+        columns: [
+          { title: "First Name", data: "firstName" },
+          { title: "Last Name", data: "lastName" },
+          { title: "Start Date", data: "startDate" },
+          { title: "Department", data: "department" },
+          { title: "Date of Birth", data: "dateOfBirth" },
+          { title: "Street", data: "street" },
+          { title: "City", data: "city" },
+          { title: "State", data: "state" },
+          { title: "Zip Code", data: "zipCode" },
+        ],
+      });
+    });
+    mountedRef.current = true;
   }, []);
 
-  // Fonction pour revenir au formulaire
-  const goToEmployeeForm = () => {
-    navigate("/"); // Redirige vers le formulaire (la route /)
-  };
-
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-center">Employee List</h2>
+    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+      {/* Titre principal */}
+      <h2 className="text-3xl font-bold text-center text-purple-600 mb-6">
+        Employee List
+      </h2>
 
-      <DataTable
-        columns={columns}
-        data={employees}
-        pagination
-        highlightOnHover
-        striped
-        responsive
-        defaultSortFieldId={1}
-      />
+      {/* Tableau des employés */}
+      {employees.length > 0 ? (
+        <table id="employee-table" className="display"></table>
+      ) : (
+        <p className="text-center text-gray-500">No employees found.</p>
+      )}
 
       {/* Bouton pour revenir au formulaire */}
-      <button
-        onClick={goToEmployeeForm}
-        className="mt-4 p-2 bg-blue-500 text-white rounded"
+      <Link
+        to="/"
+        className="mt-6 px-4 py-2 bg-pink-500 text-white font-semibold rounded-lg shadow hover:bg-pink-600"
       >
         Back to Employee Form
-      </button>
+      </Link>
     </div>
   );
 };
