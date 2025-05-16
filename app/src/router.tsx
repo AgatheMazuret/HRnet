@@ -7,13 +7,8 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Route pour le formulaire d'employé */}
         <Route path="/" element={<EmployeeForm />} />
-
-        {/* Route pour la liste des employés */}
         <Route path="/employees" element={<EmployeeList />} />
-
-        {/* Redirection pour les routes non définies */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

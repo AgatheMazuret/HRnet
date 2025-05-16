@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router";
 import Modal from "@agathemazuret/hrnet-react-modal";
 
+// Permet d'utiliser le composant DatePicker avec les props typées
 const CustomDatePicker =
   DatePicker as React.ComponentType<ReactDatePickerProps>;
 
@@ -14,6 +15,7 @@ interface State {
   abbreviation: string;
 }
 
+// Définition du type Employee avec des champs pouvant être string, Date ou null
 interface Employee {
   [key: string]: string | Date | null;
   firstName: string;
@@ -27,6 +29,7 @@ interface Employee {
   zipCode: string;
 }
 
+// Champs du formulaire à générer dynamiquement
 const fields = [
   { name: "firstName", placeholder: "First Name" },
   { name: "lastName", placeholder: "Last Name" },
@@ -36,6 +39,7 @@ const fields = [
 ];
 
 export function EmployeeForm() {
+  // État local pour stocker les valeurs du formulaire
   const [formData, setFormData] = useState<Employee>({
     firstName: "",
     lastName: "",
@@ -48,8 +52,10 @@ export function EmployeeForm() {
     zipCode: "",
   });
 
+  // Contrôle l'affichage de la modale de confirmation
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  // Gère la modification des champs texte et select
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -57,10 +63,12 @@ export function EmployeeForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Gère la modification des dates (DatePicker)
   const handleDateChange = (name: string, date: Date | null) => {
     setFormData((prev) => ({ ...prev, [name]: date }));
   };
 
+  // Soumission du formulaire : affiche la modale de confirmation
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setShowConfirmation(true);
@@ -89,6 +97,7 @@ export function EmployeeForm() {
         className="flex flex-col gap-6 bg-white p-6 rounded-lg shadow-md"
         onSubmit={handleSubmit}
       >
+        {/* Génération dynamique des champs texte */}
         {fields.map((field) => (
           <input
             key={field.name}
@@ -147,6 +156,7 @@ export function EmployeeForm() {
           required
         >
           <option value="">Select State</option>
+          {/* Génération dynamique des options à partir du tableau states */}
           {states.map((s: State) => (
             <option key={s.abbreviation} value={s.abbreviation}>
               {s.name}

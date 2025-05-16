@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router";
 
-// Définition du type Employee pour représenter les données d'un employé
 type Employee = {
   firstName: string;
   lastName: string;
@@ -24,17 +23,20 @@ function getData(): Employee[] {
 
 // Composant principal pour afficher la liste des employés
 const EmployeeTable = () => {
+  // Ref pour éviter de réinitialiser DataTable à chaque rendu
   const mountedRef = React.useRef(false);
   const employees = getData();
 
   // Chargement des employés depuis le localStorage au montage du composant
   useEffect(() => {
+    // Empêche l'initialisation multiple de DataTable
     if (mountedRef.current) {
       return;
     }
+    // Initialisation du tableau DataTable avec jQuery
     $(function () {
       $("#employee-table").DataTable({
-        data: employees,
+        data: employees, // Données à afficher dans le tableau
         columns: [
           { title: "First Name", data: "firstName" },
           { title: "Last Name", data: "lastName" },
@@ -53,19 +55,17 @@ const EmployeeTable = () => {
 
   return (
     <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-      {/* Titre principal */}
       <h2 className="text-3xl font-bold text-center text-purple-600 mb-6">
         Employee List
       </h2>
 
-      {/* Tableau des employés */}
       {employees.length > 0 ? (
+        // DataTable va remplir ce tableau via jQuery
         <table id="employee-table" className="display"></table>
       ) : (
         <p className="text-center text-gray-500">No employees found.</p>
       )}
 
-      {/* Bouton pour revenir au formulaire */}
       <Link
         to="/"
         className="mt-6 px-4 py-2 bg-pink-500 text-white font-semibold rounded-lg shadow hover:bg-pink-600"

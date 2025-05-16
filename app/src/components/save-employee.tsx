@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { states } from "../components/states";
 
-// Définition du type Employee pour représenter un employé
 interface Employee {
   id: number;
   firstName: string;
@@ -15,7 +14,6 @@ interface Employee {
   zipCode: string;
 }
 
-// Données initiales pour le formulaire d'employé
 const initialEmployeeData: Omit<Employee, "id"> = {
   firstName: "",
   lastName: "",
@@ -51,14 +49,16 @@ const EmployeeForm: React.FC<{
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Génère un id unique pour chaque employé
     const newEmployee = { id: Date.now(), ...employeeData };
     onSave(newEmployee);
+    // Réinitialise le formulaire après l'ajout
     setEmployeeData(initialEmployeeData);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Champs du formulaire */}
+      {/* Génération dynamique des champs du formulaire */}
       {(
         [
           { label: "First Name", name: "firstName", type: "text" },
@@ -84,7 +84,7 @@ const EmployeeForm: React.FC<{
         </label>
       ))}
 
-      {/* Sélecteur pour l'état */}
+      {/* Sélecteur pour l'état (state) */}
       <label className="block">
         State:
         <select
@@ -95,6 +95,7 @@ const EmployeeForm: React.FC<{
           required
         >
           <option value="">Select State</option>
+          {/* Génération dynamique des options à partir du tableau states */}
           {states.map((state) => (
             <option key={state.abbreviation} value={state.abbreviation}>
               {state.name}
@@ -103,7 +104,6 @@ const EmployeeForm: React.FC<{
         </select>
       </label>
 
-      {/* Bouton pour soumettre le formulaire */}
       <button
         type="submit"
         className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -126,18 +126,19 @@ const EmployeeList: React.FC<{ employees: Employee[] }> = ({ employees }) => (
 );
 
 // Composant principal pour gérer les employés
-const SaveEmployee: React.FC = () => {
+const SaveEmployee = () => {
+  // Initialise la liste des employés à partir du localStorage
   const [employees, setEmployees] = useState<Employee[]>(
     JSON.parse(localStorage.getItem("employees") || "[]")
   );
 
   /**
-   * Ajoute un nouvel employé à la liste
-   * @param newEmployee - Nouvel employé à ajouter
+   * Ajoute un nouvel employé à la liste et met à jour le localStorage
    */
   const handleSaveEmployee = (newEmployee: Employee) => {
     const updatedEmployees = [...employees, newEmployee];
     setEmployees(updatedEmployees);
+    // Sauvegarde la liste mise à jour dans le localStorage
     localStorage.setItem("employees", JSON.stringify(updatedEmployees));
   };
 
