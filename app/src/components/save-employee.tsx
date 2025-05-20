@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { states } from "../components/states";
 
-// Définition du type Employee pour représenter un employé
 interface Employee {
   id: number;
   firstName: string;
@@ -15,7 +14,7 @@ interface Employee {
   zipCode: string;
 }
 
-// Données initiales pour le formulaire d'employé
+// Objet initial pour réinitialiser le formulaire après soumission
 const initialEmployeeData: Omit<Employee, "id"> = {
   firstName: "",
   lastName: "",
@@ -28,16 +27,13 @@ const initialEmployeeData: Omit<Employee, "id"> = {
   zipCode: "",
 };
 
-// Composant pour le formulaire d'employé
+// Composant formulaire d'ajout d'employé
 const EmployeeForm: React.FC<{
   onSave: (employee: Employee) => void;
 }> = ({ onSave }) => {
   const [employeeData, setEmployeeData] = useState(initialEmployeeData);
 
-  /**
-   * Gère les changements dans les champs du formulaire
-   * @param e - Événement de changement
-   */
+  // Gère les changements sur tous les champs du formulaire (texte et select)
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -45,20 +41,21 @@ const EmployeeForm: React.FC<{
     setEmployeeData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  /**
-   * Gère la soumission du formulaire
-   * @param e - Événement de soumission
-   */
+  // Soumission du formulaire : création d'un nouvel employé avec un id unique (timestamp)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newEmployee = { id: Date.now(), ...employeeData };
+    const newEmployee = { id: Date.now(), ...employeeData }; // Utilisation de Date.now() pour générer un id unique
     onSave(newEmployee);
-    setEmployeeData(initialEmployeeData);
+    setEmployeeData(initialEmployeeData); // Réinitialise le formulaire après l'ajout
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Champs du formulaire */}
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4"
+      aria-label="Employee Form"
+    >
+      {/* Génération dynamique des champs du formulaire à partir d'un tableau d'objets */}
       {(
         [
           { label: "First Name", name: "firstName", type: "text" },
@@ -71,28 +68,36 @@ const EmployeeForm: React.FC<{
           { label: "Zip Code", name: "zipCode", type: "text" },
         ] as const
       ).map((field) => (
-        <label key={field.name} className="block">
-          {field.label}:
+        <div key={field.name} className="block">
+          <label htmlFor={field.name} className="block font-medium">
+            {field.label}:
+          </label>
           <input
+            id={field.name}
             type={field.type}
             name={field.name}
             value={employeeData[field.name as keyof Omit<Employee, "id">]}
             onChange={handleChange}
             className="block w-full p-2 border rounded"
             required
+            aria-required="true"
           />
-        </label>
+        </div>
       ))}
 
-      {/* Sélecteur pour l'état */}
-      <label className="block">
-        State:
+      <div className="block">
+        <label htmlFor="state" className="block font-medium">
+          State:
+        </label>
+        {/* Liste déroulante générée dynamiquement à partir du tableau states */}
         <select
+          id="state"
           name="state"
           value={employeeData.state}
           onChange={handleChange}
           className="block w-full p-2 border rounded"
           required
+          aria-required="true"
         >
           <option value="">Select State</option>
           {states.map((state) => (
@@ -101,12 +106,12 @@ const EmployeeForm: React.FC<{
             </option>
           ))}
         </select>
-      </label>
+      </div>
 
-      {/* Bouton pour soumettre le formulaire */}
       <button
         type="submit"
         className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        aria-label="Save employee information"
       >
         Save Employee
       </button>
@@ -114,9 +119,9 @@ const EmployeeForm: React.FC<{
   );
 };
 
-// Composant pour afficher la liste des employés
+// Affiche la liste des employés sauvegardés
 const EmployeeList: React.FC<{ employees: Employee[] }> = ({ employees }) => (
-  <ul className="list-disc pl-5">
+  <ul className="list-disc pl-5" aria-label="Employee list">
     {employees.map((employee) => (
       <li key={employee.id}>
         {employee.firstName} {employee.lastName} - {employee.department}
@@ -125,25 +130,27 @@ const EmployeeList: React.FC<{ employees: Employee[] }> = ({ employees }) => (
   </ul>
 );
 
-// Composant principal pour gérer les employés
+// Composant principal qui gère la liste des employés et la persistance dans le localStorage
 const SaveEmployee: React.FC = () => {
+  // Initialisation de l'état avec les employés stockés dans le localStorage (ou tableau vide si aucun)
   const [employees, setEmployees] = useState<Employee[]>(
     JSON.parse(localStorage.getItem("employees") || "[]")
   );
 
-  /**
-   * Ajoute un nouvel employé à la liste
-   * @param newEmployee - Nouvel employé à ajouter
-   */
+  // Ajoute un nouvel employé à la liste et met à jour le localStorage
   const handleSaveEmployee = (newEmployee: Employee) => {
     const updatedEmployees = [...employees, newEmployee];
     setEmployees(updatedEmployees);
     localStorage.setItem("employees", JSON.stringify(updatedEmployees));
   };
 
+  // Affichage du formulaire et de la liste des employés
   return (
     <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-      <h1 className="text-3xl font-bold text-center text-purple-600 mb-6">
+      <h1
+        className="text-3xl font-bold text-center text-purple-600 mb-6"
+        id="main-heading"
+      >
         Save Employee
       </h1>
       <EmployeeForm onSave={handleSaveEmployee} />

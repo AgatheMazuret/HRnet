@@ -6,18 +6,17 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router";
 import Modal from "@agathemazuret/hrnet-react-modal";
 
+// On crée un composant personnalisé pour le DatePicker afin de pouvoir typer correctement ses props
 const CustomDatePicker =
   DatePicker as React.ComponentType<ReactDatePickerProps>;
 
-// Interface définissant la structure d'un état (state) pour le formulaire
 interface State {
   name: string;
   abbreviation: string;
 }
 
-// Composant principal du formulaire d'employé
 export function EmployeeForm() {
-  // État local pour stocker les données du formulaire
+  // On gère l'état du formulaire avec un objet contenant toutes les valeurs des champs
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -30,16 +29,11 @@ export function EmployeeForm() {
     zipCode: "",
   });
 
-  // État pour afficher ou masquer le message de confirmation
+  // État pour afficher ou non la modale de confirmation
   const [showConfirmation, setShowConfirmation] = useState(false);
-
-  // Hook pour naviguer entre les pages
   const navigate = useNavigate();
 
-  /**
-   * Gère les changements dans les champs de texte et les sélecteurs
-   * @param e - Événement de changement provenant d'un champ de formulaire
-   */
+  // Fonction générique pour gérer les changements sur les champs texte et select
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -50,11 +44,7 @@ export function EmployeeForm() {
     }));
   };
 
-  /**
-   * Gère les changements dans les champs de type date
-   * @param name - Nom du champ de date
-   * @param date - Nouvelle valeur de la date
-   */
+  // Fonction dédiée pour gérer les changements sur les champs de type date
   const handleDateChange = (name: string, date: Date | null) => {
     setFormData((prev) => ({
       ...prev,
@@ -62,39 +52,40 @@ export function EmployeeForm() {
     }));
   };
 
-  /**
-   * Gère la soumission du formulaire
-   * Sauvegarde les données dans le localStorage et affiche un message de confirmation
-   * @param e - Événement de soumission du formulaire
-   */
+  // Lors de la soumission du formulaire, on sauvegarde l'employé dans le localStorage
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // On récupère les employés existants, on ajoute le nouveau, puis on sauvegarde
     const employees = JSON.parse(localStorage.getItem("employees") || "[]");
     employees.push(formData);
     localStorage.setItem("employees", JSON.stringify(employees));
     setShowConfirmation(true);
   };
 
-  /**
-   * Redirige l'utilisateur vers la liste des employés
-   */
+  // Navigation vers la liste des employés
   const goToEmployeeList = () => {
     navigate("/employees");
   };
 
-  /**
-   * Redirige l'utilisateur vers la liste des employés (bouton secondaire)
-   */
+  // Navigation vers la liste des employés (bouton secondaire)
   const viewEmployeeList = () => {
     navigate("/employees");
   };
 
   return (
-    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-      {/* Titre principal du formulaire */}
-      <h1 className="text-3xl font-bold text-center text-purple-600 mb-6">
+    <div
+      className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg"
+      role="region"
+      aria-labelledby="employee-form-title"
+    >
+      <h1
+        className="text-3xl font-bold text-center text-purple-600 mb-6"
+        id="employee-form-title"
+      >
         Employee Form
       </h1>
+
+      {/* Modale de confirmation affichée après la sauvegarde */}
       <Modal
         isOpen={showConfirmation}
         onClose={() => setShowConfirmation(false)}
@@ -102,35 +93,48 @@ export function EmployeeForm() {
       >
         <p>Employee saved successfully!</p>
       </Modal>
-      {/* Formulaire principal */}
 
       <form
         className="flex flex-col gap-6 bg-white p-6 rounded-lg shadow-md"
         onSubmit={handleSubmit}
+        aria-label="Employee registration form"
       >
-        {/* Champ pour le prénom */}
+        {/* Champs du formulaire, chaque champ est relié à formData */}
+        <label htmlFor="firstName" className="sr-only">
+          First Name
+        </label>
         <input
+          id="firstName"
           name="firstName"
           value={formData.firstName}
           onChange={handleChange}
           placeholder="First Name"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
           required
+          aria-required="true"
         />
 
-        {/* Champ pour le nom */}
+        <label htmlFor="lastName" className="sr-only">
+          Last Name
+        </label>
         <input
+          id="lastName"
           name="lastName"
           value={formData.lastName}
           onChange={handleChange}
           placeholder="Last Name"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
           required
+          aria-required="true"
         />
 
-        {/* Sélecteur de date pour la date de naissance */}
         <div className="flex flex-col gap-3">
+          <label htmlFor="dateOfBirth" className="sr-only">
+            Date of Birth
+          </label>
+          {/* Utilisation du DatePicker pour la date de naissance */}
           <CustomDatePicker
+            id="dateOfBirth"
             selected={formData.dateOfBirth}
             onChange={(date: Date | null) =>
               handleDateChange("dateOfBirth", date)
@@ -141,11 +145,16 @@ export function EmployeeForm() {
             showMonthDropdown
             dropdownMode="select"
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+            aria-label="Date of Birth"
           />
         </div>
 
-        {/* Sélecteur de date pour la date de début */}
+        <label htmlFor="startDate" className="sr-only">
+          Start Date
+        </label>
+        {/* Utilisation du DatePicker pour la date de début */}
         <CustomDatePicker
+          id="startDate"
           selected={formData.startDate}
           onChange={(date: Date | null) => handleDateChange("startDate", date)}
           placeholderText="Start Date"
@@ -154,15 +163,20 @@ export function EmployeeForm() {
           showMonthDropdown
           dropdownMode="select"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+          aria-label="Start Date"
         />
 
-        {/* Sélecteur pour le département */}
+        <label htmlFor="department" className="sr-only">
+          Department
+        </label>
         <select
+          id="department"
           name="department"
           value={formData.department}
           onChange={handleChange}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
           required
+          aria-required="true"
         >
           <option value="">Select Department</option>
           <option value="Sales">Sales</option>
@@ -171,35 +185,48 @@ export function EmployeeForm() {
           <option value="HR">HR</option>
         </select>
 
-        {/* Champ pour la rue */}
+        <label htmlFor="street" className="sr-only">
+          Street
+        </label>
         <input
+          id="street"
           name="street"
           value={formData.street}
           onChange={handleChange}
           placeholder="Street"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
           required
+          aria-required="true"
         />
 
-        {/* Champ pour la ville */}
+        <label htmlFor="city" className="sr-only">
+          City
+        </label>
         <input
+          id="city"
           name="city"
           value={formData.city}
           onChange={handleChange}
           placeholder="City"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
           required
+          aria-required="true"
         />
 
-        {/* Sélecteur pour l'état */}
+        <label htmlFor="state" className="sr-only">
+          State
+        </label>
         <select
+          id="state"
           name="state"
           value={formData.state}
           onChange={handleChange}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
           required
+          aria-required="true"
         >
           <option value="">Select State</option>
+          {/* Génération dynamique de la liste des états */}
           {states.map((s: State) => (
             <option key={s.abbreviation} value={s.abbreviation}>
               {s.name}
@@ -207,43 +234,52 @@ export function EmployeeForm() {
           ))}
         </select>
 
-        {/* Champ pour le code postal */}
+        <label htmlFor="zipCode" className="sr-only">
+          Zip Code
+        </label>
         <input
+          id="zipCode"
           name="zipCode"
           value={formData.zipCode}
           onChange={handleChange}
           placeholder="Zip Code"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
           required
+          aria-required="true"
         />
 
-        {/* Bouton pour soumettre le formulaire */}
         <button
           type="submit"
           className="w-full p-3 bg-purple-500 text-white font-semibold rounded-lg shadow hover:bg-purple-600"
+          aria-label="Submit employee form"
         >
           Save
         </button>
 
-        {/* Bouton pour afficher la liste des employés */}
         <button
           type="button"
           onClick={viewEmployeeList}
           className="w-full p-3 bg-pink-500 text-white font-semibold rounded-lg shadow hover:bg-pink-600"
+          aria-label="View employee list"
         >
           View Employee List
         </button>
       </form>
 
-      {/* faire une modal */}
+      {/* Affichage d'une confirmation supplémentaire après la sauvegarde */}
       {showConfirmation && (
-        <div className="mt-6 p-4 bg-pink-100 border border-pink-500 rounded-lg shadow">
+        <div
+          className="mt-6 p-4 bg-pink-100 border border-pink-500 rounded-lg shadow"
+          role="status"
+          aria-live="polite"
+        >
           <p className="text-purple-700 font-bold">
             Employee saved successfully!
           </p>
           <button
             onClick={goToEmployeeList}
             className="mt-4 px-4 py-2 bg-purple-500 text-white rounded-lg shadow hover:bg-purple-600"
+            aria-label="Go to employee list"
           >
             Go to Employee List
           </button>
