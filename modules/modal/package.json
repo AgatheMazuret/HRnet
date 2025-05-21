@@ -1,8 +1,8 @@
 {
   "name": "@agathemazuret/hrnet-react-modal",
   "type": "module",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Composant React pour afficher une modale accessible",
   "main": "src/index.tsx",
   "scripts": {},
   "keywords": [],
