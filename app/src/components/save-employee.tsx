@@ -1,18 +1,6 @@
 import React, { useState } from "react";
-import { states } from "../components/states";
-
-interface Employee {
-  id: number;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  startDate: string;
-  department: string;
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-}
+import { states } from "../states";
+import type { Employee } from "../types";
 
 // Objet initial pour réinitialiser le formulaire après soumission
 const initialEmployeeData: Omit<Employee, "id"> = {

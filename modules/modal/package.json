@@ -6,6 +6,13 @@
   "main": "src/index.tsx",
   "scripts": {},
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Agathe Mazuret",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.4",
+    "typescript": "~5.8.3"
+  }
 }

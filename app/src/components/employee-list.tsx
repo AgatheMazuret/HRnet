@@ -1,31 +1,12 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router";
+import type { Employee } from "../types";
 
 // Définition du type Employee pour représenter les données d'un employé
-type Employee = {
-  firstName: string;
-  lastName: string;
-  startDate: string;
-  department: string;
-  dateOfBirth: string;
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-};
-
-function getData(): Employee[] {
-  const data = localStorage.getItem("employees");
-  if (data) {
-    return JSON.parse(data);
-  }
-  return [];
-}
 
 // Composant principal pour afficher la liste des employés
-const EmployeeTable = () => {
+const EmployeeTable = ({ employees }: { employees: Employee[] }) => {
   const mountedRef = React.useRef(false);
-  const employees = getData();
 
   // Chargement des employés depuis le localStorage au montage du composant
   useEffect(() => {

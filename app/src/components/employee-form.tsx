@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { states } from "./states";
+import { states } from "../states";
 import DatePicker from "react-datepicker";
 import { ReactDatePickerProps } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router";
 import Modal from "@agathemazuret/hrnet-react-modal";
+import type { Employee } from "../types";
 
 // On crée un composant personnalisé pour le DatePicker afin de pouvoir typer correctement ses props
 const CustomDatePicker =
@@ -15,7 +16,11 @@ interface State {
   abbreviation: string;
 }
 
-export function EmployeeForm() {
+export function EmployeeForm({
+  onSubmit,
+}: {
+  onSubmit: (employee: Employee) => void;
+}) {
   // On gère l'état du formulaire avec un objet contenant toutes les valeurs des champs
   const [formData, setFormData] = useState({
     firstName: "",
@@ -55,10 +60,20 @@ export function EmployeeForm() {
   // Lors de la soumission du formulaire, on sauvegarde l'employé dans le localStorage
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // On récupère les employés existants, on ajoute le nouveau, puis on sauvegarde
-    const employees = JSON.parse(localStorage.getItem("employees") || "[]");
-    employees.push(formData);
-    localStorage.setItem("employees", JSON.stringify(employees));
+
+    onSubmit(formData);
+    setFormData({
+      firstName: "",
+      lastName: "",
+      dateOfBirth: null,
+      startDate: null,
+      department: "",
+      street: "",
+      city: "",
+      state: "",
+      zipCode: "",
+    });
+
     setShowConfirmation(true);
   };
 
