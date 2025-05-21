@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { states } from "../states";
 import type { Employee } from "../types";
 
-// Objet initial pour réinitialiser le formulaire après soumission
+// État initial du formulaire (hors id)
 const initialEmployeeData: Omit<Employee, "id"> = {
   firstName: "",
   lastName: "",
@@ -15,26 +15,33 @@ const initialEmployeeData: Omit<Employee, "id"> = {
   zipCode: "",
 };
 
-// Composant formulaire d'ajout d'employé
-const EmployeeForm: React.FC<{
+// Props attendues : une fonction de sauvegarde d'un employé
+// (le parent gère la persistance ou l'ajout à la liste)
+type EmployeeFormProps = {
   onSave: (employee: Employee) => void;
-}> = ({ onSave }) => {
+};
+
+const EmployeeForm = ({ onSave }: EmployeeFormProps) => {
+  // État local pour stocker les valeurs du formulaire
   const [employeeData, setEmployeeData] = useState(initialEmployeeData);
 
-  // Gère les changements sur tous les champs du formulaire (texte et select)
+  // Gère le changement de tous les champs du formulaire (input et select)
+  // Utilise le nom du champ pour mettre à jour dynamiquement la bonne propriété
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
+    //Met à jour dynamiquement la propriété de l’objet employeeData avec la nouvelle value issue de l’événement
     const { name, value } = e.target;
     setEmployeeData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Soumission du formulaire : création d'un nouvel employé avec un id unique (timestamp)
+  // Soumission du formulaire : crée un nouvel employé avec un id unique
+  // puis réinitialise le formulaire
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newEmployee = { id: Date.now(), ...employeeData }; // Utilisation de Date.now() pour générer un id unique
+    const newEmployee = { id: Date.now(), ...employeeData };
     onSave(newEmployee);
-    setEmployeeData(initialEmployeeData); // Réinitialise le formulaire après l'ajout
+    setEmployeeData(initialEmployeeData);
   };
 
   return (
@@ -43,7 +50,6 @@ const EmployeeForm: React.FC<{
       className="space-y-4"
       aria-label="Employee Form"
     >
-      {/* Génération dynamique des champs du formulaire à partir d'un tableau d'objets */}
       {(
         [
           { label: "First Name", name: "firstName", type: "text" },
@@ -73,11 +79,11 @@ const EmployeeForm: React.FC<{
         </div>
       ))}
 
+      {/* Sélecteur d'état (dropdown), options générées à partir de la liste des états */}
       <div className="block">
         <label htmlFor="state" className="block font-medium">
           State:
         </label>
-        {/* Liste déroulante générée dynamiquement à partir du tableau states */}
         <select
           id="state"
           name="state"
@@ -107,47 +113,4 @@ const EmployeeForm: React.FC<{
   );
 };
 
-// Affiche la liste des employés sauvegardés
-const EmployeeList: React.FC<{ employees: Employee[] }> = ({ employees }) => (
-  <ul className="list-disc pl-5" aria-label="Employee list">
-    {employees.map((employee) => (
-      <li key={employee.id}>
-        {employee.firstName} {employee.lastName} - {employee.department}
-      </li>
-    ))}
-  </ul>
-);
-
-// Composant principal qui gère la liste des employés et la persistance dans le localStorage
-const SaveEmployee: React.FC = () => {
-  // Initialisation de l'état avec les employés stockés dans le localStorage (ou tableau vide si aucun)
-  const [employees, setEmployees] = useState<Employee[]>(
-    JSON.parse(localStorage.getItem("employees") || "[]")
-  );
-
-  // Ajoute un nouvel employé à la liste et met à jour le localStorage
-  const handleSaveEmployee = (newEmployee: Employee) => {
-    const updatedEmployees = [...employees, newEmployee];
-    setEmployees(updatedEmployees);
-    localStorage.setItem("employees", JSON.stringify(updatedEmployees));
-  };
-
-  // Affichage du formulaire et de la liste des employés
-  return (
-    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-      <h1
-        className="text-3xl font-bold text-center text-purple-600 mb-6"
-        id="main-heading"
-      >
-        Save Employee
-      </h1>
-      <EmployeeForm onSave={handleSaveEmployee} />
-      <h2 className="text-2xl font-semibold text-gray-700 mt-8">
-        Employees List
-      </h2>
-      <EmployeeList employees={employees} />
-    </div>
-  );
-};
-
-export default SaveEmployee;
+export default EmployeeForm;

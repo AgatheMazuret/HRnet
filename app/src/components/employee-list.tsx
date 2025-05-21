@@ -8,15 +8,16 @@ import type { Employee } from "../types";
 const EmployeeTable = ({ employees }: { employees: Employee[] }) => {
   const mountedRef = React.useRef(false);
 
-  // Chargement des employés depuis le localStorage au montage du composant
+  // Utilisation de useEffect pour initialiser DataTables une seule fois après le montage
   useEffect(() => {
     if (mountedRef.current) {
+      // Empêche la réinitialisation de DataTables lors des re-rendus
       return;
     }
-    // Vérification de l'existence de jQuery et DataTables
+    // Vérification de l'existence de jQuery et DataTables puis initialisation du tableau dynamique
     $(function () {
       $("#employee-table").DataTable({
-        data: employees,
+        data: employees, // Injection des données des employés dans DataTables
         columns: [
           { title: "First Name", data: "firstName" },
           { title: "Last Name", data: "lastName" },
@@ -30,7 +31,7 @@ const EmployeeTable = ({ employees }: { employees: Employee[] }) => {
         ],
       });
     });
-    mountedRef.current = true;
+    mountedRef.current = true; // Marque le composant comme monté pour éviter une réinitialisation
   }, [employees]);
 
   return (
@@ -39,8 +40,9 @@ const EmployeeTable = ({ employees }: { employees: Employee[] }) => {
         Employee List
       </h2>
 
-      {/* Tableau des employés */}
+      {/* Affichage conditionnel du tableau ou d'un message si la liste est vide */}
       {employees.length > 0 ? (
+        // Le tableau est géré dynamiquement par DataTables via jQuery
         <table id="employee-table" className="display"></table>
       ) : (
         <p className="text-center text-gray-500">No employees found.</p>

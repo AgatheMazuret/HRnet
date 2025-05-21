@@ -39,6 +39,7 @@ export function EmployeeForm({
   const navigate = useNavigate();
 
   // Fonction générique pour gérer les changements sur les champs texte et select
+  // Cette fonction permet de mettre à jour dynamiquement n'importe quel champ du formulaire en utilisant le nom du champ comme clé
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -50,6 +51,7 @@ export function EmployeeForm({
   };
 
   // Fonction dédiée pour gérer les changements sur les champs de type date
+  // modifie juste le champ de date concerné dans ton formulaire sans toucher aux autres champsa
   const handleDateChange = (name: string, date: Date | null) => {
     setFormData((prev) => ({
       ...prev,
@@ -58,17 +60,22 @@ export function EmployeeForm({
   };
 
   // Lors de la soumission du formulaire, on sauvegarde l'employé dans le localStorage
+  // On génère un id unique et on convertit les dates en string ISO pour la persistance
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Générer un id numérique unique pour l'employé et convertir les dates en string
+    // crée un nouvel objet employé en ajoutant un ID unique et en transformant les dates
+    //  en chaînes au format standard, tout en gardant le reste des données intactes
     const employeeWithId = {
       ...formData,
       id: Date.now(),
-      dateOfBirth: formData.dateOfBirth ? formData.dateOfBirth.toISOString() : "",
+      dateOfBirth: formData.dateOfBirth
+        ? formData.dateOfBirth.toISOString()
+        : "",
       startDate: formData.startDate ? formData.startDate.toISOString() : "",
     };
 
+    // on envoie les données puis on vide le formulaire pour préparer une nouvelle saisie
     onSubmit(employeeWithId);
     setFormData({
       firstName: "",
@@ -85,12 +92,10 @@ export function EmployeeForm({
     setShowConfirmation(true);
   };
 
-  // Navigation vers la liste des employés
   const goToEmployeeList = () => {
     navigate("/employees");
   };
 
-  // Navigation vers la liste des employés (bouton secondaire)
   const viewEmployeeList = () => {
     navigate("/employees");
   };
