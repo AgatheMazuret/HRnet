@@ -61,7 +61,15 @@ export function EmployeeForm({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    onSubmit(formData);
+    // Générer un id numérique unique pour l'employé et convertir les dates en string
+    const employeeWithId = {
+      ...formData,
+      id: Date.now(),
+      dateOfBirth: formData.dateOfBirth ? formData.dateOfBirth.toISOString() : "",
+      startDate: formData.startDate ? formData.startDate.toISOString() : "",
+    };
+
+    onSubmit(employeeWithId);
     setFormData({
       firstName: "",
       lastName: "",
